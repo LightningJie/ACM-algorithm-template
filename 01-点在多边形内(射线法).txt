@@ -1,0 +1,80 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+const double eps=1e-8;
+inline int dcmp(double x){
+	return x<-eps ? -1:x>eps;
+}
+
+struct Point{
+	double x,y;
+	Point(){}
+	Point(double a,double b):x(a),y(b){}
+
+	Point operator -(const Point &rhs) const{
+		return Point(x-rhs.x,y-rhs.y);
+	}
+};
+double det(const Point &a,const Point &b)
+{
+	return a.x*b.y-a.y*b.x;
+}
+double dot(const Point &a,const Point &b)
+{
+	return a.x*b.x+a.y*b.y;
+}
+bool on_point_segment(Point p,Point a1,Point a2)
+{
+	return dcmp(det(a1-p,a2-p))==0&&dcmp(dot(a1-p,a2-p))<=0;
+}
+int in_point_polygon(Point o,const vector<Point> &poly,bool flag)
+{
+	int t=0,k;
+	Point a,b;
+	int n=poly.size();
+	for(int i=0;i<n;i++)
+	{
+		if(on_point_segment(o,poly[i],poly[(i+1)%n]))
+			return flag;
+	}
+	for(int i=0;i<n;i++)
+	{
+		a=poly[i];
+		b=poly[(i+1)%n];
+		if(dcmp(a.y-b.y)>0)swap(a,b);
+		if(dcmp(det(a-o,b-o))<0&&dcmp(a.y-o.y)<0&&dcmp(o.y-b.y)<=0)
+			t++;
+	}
+	k=t&1;
+	if(k==1)
+		return 2;
+	else 
+		return 0;
+}
+
+int main()
+{
+	vector <Point> a;
+	vector <Point> b;
+	int n,m;
+	Point s;
+	cin>>n;
+	for(int i=0;i<n;i++)
+	{
+		cin>>s.x>>s.y;
+		a.push_back(s);
+	}
+	cin>>m;
+	for(int i=0;i<m;i++)
+	{
+		cin>>s.x>>s.y;
+		b.push_back(s);
+	}
+
+	for(int i=0;i<m;i++)
+	{
+		printf("%d\n",in_point_polygon(b[i],a,1));
+
+	}
+
+}
